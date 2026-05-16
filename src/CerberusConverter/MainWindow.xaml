@@ -1,0 +1,209 @@
+<Window x:Class="CerberusConverter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Cerberus Converter"
+        Width="1120"
+        Height="740"
+        MinWidth="920"
+        MinHeight="620"
+        Icon="pack://application:,,,/Data/icone.ico"
+        Background="{StaticResource BgDeepBrush}"
+        AllowDrop="True"
+        Drop="Window_Drop"
+        WindowStyle="SingleBorderWindow"
+        ResizeMode="CanResize">
+
+    <Grid Margin="24,20,24,18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="280" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Image Source="pack://application:,,,/Data/icone.ico"
+                       Width="28"
+                       Height="28"
+                       Margin="0,0,12,0" />
+                <StackPanel>
+                    <TextBlock Text="Cerberus Converter" FontSize="26" FontWeight="Bold" />
+                    <TextBlock Text="Conversao local de imagens"
+                               FontSize="12"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               Margin="0,3,0,0" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,22,0,14">
+            <Button Click="AddFiles_Click" Margin="0,0,8,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE710;" FontSize="12" Margin="0,0,8,0" VerticalAlignment="Center" />
+                    <TextBlock Text="Adicionar" />
+                </StackPanel>
+            </Button>
+            <Button Click="AddFolder_Click" Margin="0,0,8,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8B7;" FontSize="12" Margin="0,0,8,0" VerticalAlignment="Center" />
+                    <TextBlock Text="Pasta" />
+                </StackPanel>
+            </Button>
+            <Button Click="RemoveSelected_Click" Margin="0,0,8,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="12" Margin="0,0,8,0" VerticalAlignment="Center" />
+                    <TextBlock Text="Remover" />
+                </StackPanel>
+            </Button>
+            <Button Style="{StaticResource DangerButton}" Click="Clear_Click" Margin="0,0,8,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE894;" FontSize="12" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="{StaticResource DangerBrush}" />
+                    <TextBlock Text="Limpar" Foreground="{StaticResource DangerBrush}" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <Border Grid.Row="2"
+                CornerRadius="12"
+                Background="{StaticResource BgSurfaceBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="1"
+                ClipToBounds="True"
+                Margin="0,0,18,0">
+            <Grid>
+                <DataGrid x:Name="ImageDataGrid">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="" Width="64">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border Width="44"
+                                            Height="44"
+                                            CornerRadius="7"
+                                            Background="{StaticResource BgDeepBrush}"
+                                            BorderBrush="{StaticResource BorderSubtleBrush}"
+                                            BorderThickness="1"
+                                            ClipToBounds="True"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center">
+                                        <Image Source="{Binding PreviewImage}"
+                                               Stretch="UniformToFill"
+                                               RenderOptions.BitmapScalingMode="HighQuality" />
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="ARQUIVO" Binding="{Binding FileName}" Width="1.7*" />
+                        <DataGridTextColumn Header="ENTRADA" Binding="{Binding InputFormat}" Width="90" />
+                        <DataGridTextColumn Header="TAMANHO" Binding="{Binding SizeText}" Width="95" />
+                        <DataGridTextColumn Header="RESOLUCAO" Binding="{Binding DimensionsText}" Width="110" />
+                        <DataGridTextColumn Header="ESTIMADO" Binding="{Binding EstimatedOutputText}" Width="105" />
+                        <DataGridTextColumn Header="REDUCAO" Binding="{Binding ReductionText}" Width="105" />
+                        <DataGridTemplateColumn Header="PROGRESSO" Width="110">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ProgressBar Minimum="0" Maximum="100" Value="{Binding Progress}" Height="6" Margin="0,0,8,0" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="STATUS" Binding="{Binding Status}" Width="1.4*" />
+                        <DataGridTemplateColumn Header="" Width="54">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource IconButton}"
+                                            Width="34"
+                                            Height="34"
+                                            Padding="6"
+                                            Tag="{Binding}"
+                                            Click="RemoveItem_Click"
+                                            ToolTip="Remover imagem">
+                                        <TextBlock FontFamily="Segoe MDL2 Assets"
+                                                   Text="&#xE74D;"
+                                                   FontSize="13"
+                                                   Foreground="{StaticResource DangerBrush}" />
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <Border x:Name="DropOverlay" Visibility="Collapsed" Background="#CC0A0E17" CornerRadius="12">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="&#xE8B7;" FontFamily="Segoe MDL2 Assets" FontSize="40" Foreground="{StaticResource AccentSolidBrush}" HorizontalAlignment="Center" />
+                        <TextBlock Text="Solte as imagens aqui" FontSize="16" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,12,0,0" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2"
+                Grid.Column="1"
+                Background="{StaticResource BgSurfaceBrush}"
+                BorderBrush="{StaticResource BorderSubtleBrush}"
+                BorderThickness="1"
+                CornerRadius="12"
+                Padding="18">
+            <StackPanel>
+                <TextBlock Text="Configuracao" FontSize="18" FontWeight="Bold" Margin="0,0,0,18" />
+
+                <TextBlock Text="Formato de saida" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6" />
+                <ComboBox x:Name="ImageFormatCombo" SelectionChanged="ImageSettings_Changed" />
+
+                <DockPanel Margin="0,18,0,6">
+                    <TextBlock Text="Qualidade" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <TextBlock x:Name="ImageQualityValue"
+                               DockPanel.Dock="Right"
+                               FontWeight="Bold"
+                               FontSize="13"
+                               Foreground="{StaticResource AccentSolidBrush}" />
+                </DockPanel>
+                <Slider x:Name="ImageQualitySlider"
+                        Minimum="1"
+                        Maximum="100"
+                        TickFrequency="1"
+                        ValueChanged="ImageSettings_Changed" />
+
+                <TextBlock Text="Pasta de saida" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,18,0,6" />
+                <DockPanel>
+                    <Button DockPanel.Dock="Right"
+                            Style="{StaticResource IconButton}"
+                            Click="BrowseImageOutput_Click"
+                            Margin="4,0,0,0"
+                            ToolTip="Escolher pasta">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8B7;" FontSize="14" />
+                    </Button>
+                    <TextBox x:Name="ImageOutputFolderTextBox" FontSize="11" />
+                </DockPanel>
+
+                <TextBlock x:Name="StatusText"
+                           Text="Pronto"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Margin="0,18,0,0" />
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="3" Grid.ColumnSpan="2" Margin="0,16,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="ItemCountText"
+                       VerticalAlignment="Center"
+                       Foreground="{StaticResource TextMutedBrush}"
+                       FontSize="12" />
+            <Button Grid.Column="1" Style="{StaticResource PrimaryButton}" Click="Convert_Click">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE768;" FontSize="14" Margin="0,0,10,0" VerticalAlignment="Center" />
+                    <TextBlock Text="Converter imagens" FontSize="13" />
+                </StackPanel>
+            </Button>
+        </Grid>
+    </Grid>
+</Window>
